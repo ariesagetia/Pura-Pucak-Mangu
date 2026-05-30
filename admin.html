@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Input Data - Puncak Mangu</title>
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --secondary: #9333ea;
+
+      --text: #0f172a;
+      --muted: #64748b;
+
+      --bg: #f1f5f9;
+      --card: rgba(255, 255, 255, 0.92);
+      --border: rgba(0,0,0,0.06);
+
+      --shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+      --radius: 22px;
+    }
+
+    body.dark {
+      --text: #f8fafc;
+      --muted: #94a3b8;
+
+      --bg: #0b1220;
+      --card: rgba(20, 27, 45, 0.92);
+      --border: rgba(255,255,255,0.08);
+
+      --shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      transition: 0.25s;
+    }
+
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 99;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-bottom-left-radius: 26px;
+      border-bottom-right-radius: 26px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.14);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    header p {
+      margin: 6px 0 0;
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .top-actions {
+      margin-top: 12px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.22);
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: 0.2s;
+      user-select: none;
+      text-decoration: none;
+      color: white;
+    }
+
+    .chip:hover {
+      background: rgba(255,255,255,0.26);
+    }
+
+    .container {
+      max-width: 950px;
+      margin: auto;
+      padding: 18px;
+      padding-bottom: 90px;
+    }
+
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 18px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+    }
+
+    label {
+      font-weight: 900;
+      font-size: 13px;
+      display: block;
+      margin-top: 14px;
+      margin-bottom: 6px;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(0,0,0,0.12);
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    body.dark input, body.dark textarea {
+      background: rgba(0,0,0,0.25);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: white;
+    }
+
+    textarea {
+      min-height: 130px;
+      resize: vertical;
+      line-height: 1.6;
+    }
+
+    .btn {
+      margin-top: 18px;
+      width: 100%;
+      padding: 14px;
+      border-radius: 16px;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 900;
+      color: white;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.28);
+    }
+
+    .btn:hover {
+      opacity: 0.95;
+    }
+
+    .msg {
+      margin-top: 14px;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .preview {
+      margin-top: 14px;
+      text-align: center;
+    }
+
+    .preview img {
+      max-width: 100%;
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <h1>🛠 Admin Input Data Puncak Mangu</h1>
+  <p>Data langsung tersimpan ke Google Sheet (id=1)</p>
+
+  <div class="top-actions">
+    <a class="chip" href="index.html">🏠 Home</a>
+    <div class="chip" onclick="toggleDarkMode()">🌙 Dark Mode</div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="card">
+
+    <label>Password Admin</label>
+    <input type="password" id="password" placeholder="Masukkan password admin">
+
+    <label>Nama Destinasi</label>
+    <input type="text" id="nama" placeholder="Puncak Mangu">
+
+    <label>Link Foto (URL)</label>
+    <input type="text" id="foto" placeholder="https://drive.google.com/thumbnail?id=....">
+
+    <div class="preview" id="previewBox"></div>
+
+    <label>Deskripsi Pura</label>
+    <textarea id="deskripsi"></textarea>
+
+    <label>Nilai Spiritual</label>
+    <textarea id="nilai_spiritual"></textarea>
+
+    <label>Etika Berkunjung</label>
+    <textarea id="etika_berkunjung"></textarea>
+
+    <label>Jalur Trekking</label>
+    <textarea id="jalur_trekking"></textarea>
+
+    <button class="btn" onclick="simpanData()">💾 Simpan ke Google Sheet</button>
+
+    <div class="msg" id="msgBox"></div>
+
+  </div>
+</div>
+
+<script>
+  // GANTI DENGAN URL APPS SCRIPT ANDA
+  const apiURL = "https://script.google.com/macros/s/AKfycbyCaDzpbAvtFbD-uNLix2hKZO_-qEn_mpdEAKJWO7zqvCEHslj8gxcUUX2MFTALB9sQ/exec";
+
+  function loadDarkMode() {
+    const mode = localStorage.getItem("darkMode");
+    if (mode === "on") document.body.classList.add("dark");
+  }
+
+  function toggleDarkMode() {
+    document.body.classList.toggle("dark");
+
+    if (document.body.classList.contains("dark")) {
+      localStorage.setItem("darkMode", "on");
+    } else {
+      localStorage.setItem("darkMode", "off");
+    }
+  }
+
+  function showPreview(url) {
+    if (!url) {
+      document.getElementById("previewBox").innerHTML = "";
+      return;
+    }
+
+    document.getElementById("previewBox").innerHTML = `
+      <p style="font-weight:900;color:gray;">Preview Foto</p>
+      <img src="${url}">
+    `;
+  }
+
+  document.getElementById("foto").addEventListener("input", function() {
+    showPreview(this.value);
+  });
+
+  async function loadExistingData() {
+    try {
+      const res = await fetch(apiURL);
+      const json = await res.json();
+      const data = json.data;
+
+      const pura = data.find(item => Number(item.id) === 1);
+
+      if (pura) {
+        document.getElementById("nama").value = pura.nama || "";
+        document.getElementById("foto").value = pura.foto || "";
+        document.getElementById("deskripsi").value = pura.deskripsi || "";
+        document.getElementById("nilai_spiritual").value = pura.nilai_spiritual || "";
+        document.getElementById("etika_berkunjung").value = pura.etika_berkunjung || "";
+        document.getElementById("jalur_trekking").value = pura.jalur_trekking || "";
+
+        showPreview(pura.foto);
+      }
+    } catch (err) {
+      console.log("Gagal load data awal:", err);
+    }
+  }
+
+  async function simpanData() {
+    const msgBox = document.getElementById("msgBox");
+    msgBox.style.color = "gray";
+    msgBox.innerHTML = "⏳ Mengirim data...";
+
+    const payload = {
+      password: document.getElementById("password").value,
+      nama: document.getElementById("nama").value,
+      foto: document.getElementById("foto").value,
+      deskripsi: document.getElementById("deskripsi").value,
+      nilai_spiritual: document.getElementById("nilai_spiritual").value,
+      etika_berkunjung: document.getElementById("etika_berkunjung").value,
+      jalur_trekking: document.getElementById("jalur_trekking").value
+    };
+
+    try {
+      const res = await fetch(apiURL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const result = await res.json();
+
+      if (result.status === "success") {
+        msgBox.style.color = "green";
+        msgBox.innerHTML = "✅ " + result.message;
+      } else {
+        msgBox.style.color = "red";
+        msgBox.innerHTML = "❌ " + result.message;
+      }
+
+    } catch (err) {
+      console.error(err);
+      msgBox.style.color = "red";
+      msgBox.innerHTML = "❌ Gagal mengirim data ke server.";
+    }
+  }
+
+  loadDarkMode();
+  loadExistingData();
+</script>
+
+</body>
+</html>
