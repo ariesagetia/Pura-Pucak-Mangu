@@ -215,6 +215,27 @@ header h1{
   justify-content:center;
   margin-top:15px;
 }
+
+/* ===== VIDEO WRAPPER ===== */
+.video-wrapper {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 aspect ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: 16px;
+  margin: 20px 0;
+  box-shadow: var(--shadow);
+  background: #000;
+}
+.video-wrapper video,
+.video-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
 </style>
 </head>
 
@@ -316,6 +337,31 @@ async function loadData(){
       </div>
     `;
 
+    // Siapkan konten video
+    let videoHTML = '';
+    if (pura.video_trekking && pura.video_trekking.trim() !== '') {
+      const videoUrl = pura.video_trekking.trim();
+      // Cek apakah URL adalah link Google Drive (bisa di-embed)
+      // Contoh: https://drive.google.com/file/d/FILE_ID/view?usp=sharing
+      // Kita ubah menjadi embed link: https://drive.google.com/file/d/FILE_ID/preview
+      let embedUrl = videoUrl;
+      // Jika mengandung 'file/d/', ambil ID
+      const match = videoUrl.match(/\/file\/d\/([^/]+)/);
+      if (match) {
+        embedUrl = `https://drive.google.com/file/d/${match[1]}/preview`;
+      } else {
+        // Jika sudah berupa link embed, gunakan langsung
+        // Tapi kita pastikan menggunakan https
+        embedUrl = videoUrl.replace('http://', 'https://');
+      }
+      videoHTML = `
+        <h3>🎥 Video Panduan Trekking</h3>
+        <div class="video-wrapper">
+          <iframe src="${embedUrl}" allow="autoplay" allowfullscreen></iframe>
+        </div>
+      `;
+    }
+
     document.getElementById("contentBox").innerHTML=`
 
       <h3>🥾 Peta Jalur Trekking</h3>
@@ -325,6 +371,8 @@ async function loadData(){
           src="${pura.foto_trekking}"
           alt="Peta Jalur Trekking">
       </div>
+
+      ${videoHTML}
 
       <h3>📍 Informasi Jalur Trekking</h3>
 
