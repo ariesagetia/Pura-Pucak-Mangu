@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
 <title>Informasi Rute Trekking</title>
 
 <style>
@@ -43,6 +43,7 @@ body{
   background:var(--bg);
   color:var(--text);
   transition:.25s;
+  -webkit-text-size-adjust:100%;
 }
 
 header{
@@ -168,6 +169,26 @@ header h1{
   box-shadow:var(--shadow);
 }
 
+/* ===== VIDEO ===== */
+.trekking-video{
+  margin:20px 0;
+  text-align:center;
+  width:100%;
+}
+
+.trekking-video iframe{
+  width:100%;
+  aspect-ratio: 16 / 9;
+  max-width:560px;
+  height:auto;
+  border-radius:18px;
+  box-shadow:var(--shadow);
+  border:1px solid var(--border);
+  background:#000;
+  display:block;
+  margin:0 auto;
+}
+
 .trekking-text{
   line-height:1.8;
 }
@@ -216,25 +237,43 @@ header h1{
   margin-top:15px;
 }
 
-/* ===== VIDEO WRAPPER ===== */
-.video-wrapper {
-  position: relative;
-  padding-bottom: 56.25%; /* 16:9 aspect ratio */
-  height: 0;
-  overflow: hidden;
-  border-radius: 16px;
-  margin: 20px 0;
-  box-shadow: var(--shadow);
-  background: #000;
+/* ===== RESPONSIF HP ===== */
+@media(max-width:600px){
+  .hero{
+    height:200px;
+  }
+  .hero-title h2{
+    font-size:16px;
+  }
+  .card{
+    padding:14px;
+  }
+  .trekking-video iframe{
+    aspect-ratio: 16 / 9;
+    height:auto;
+    max-width:100%;
+    border-radius:14px;
+  }
+  .trekking-map img{
+    max-width:100%;
+  }
+  #qrcode canvas{
+    width:180px !important;
+    height:180px !important;
+  }
 }
-.video-wrapper video,
-.video-wrapper iframe {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
+
+@media(max-width:400px){
+  .hero{
+    height:160px;
+  }
+  header h1{
+    font-size:16px;
+  }
+  .chip{
+    font-size:10px;
+    padding:6px 10px;
+  }
 }
 </style>
 </head>
@@ -337,27 +376,28 @@ async function loadData(){
       </div>
     `;
 
-    // Siapkan konten video
-    let videoHTML = '';
+    // ===== VIDEO =====
+    let videoHtml = '';
     if (pura.video_trekking && pura.video_trekking.trim() !== '') {
-      const videoUrl = pura.video_trekking.trim();
-      // Cek apakah URL adalah link Google Drive (bisa di-embed)
-      // Contoh: https://drive.google.com/file/d/FILE_ID/view?usp=sharing
-      // Kita ubah menjadi embed link: https://drive.google.com/file/d/FILE_ID/preview
-      let embedUrl = videoUrl;
-      // Jika mengandung 'file/d/', ambil ID
-      const match = videoUrl.match(/\/file\/d\/([^/]+)/);
-      if (match) {
-        embedUrl = `https://drive.google.com/file/d/${match[1]}/preview`;
-      } else {
-        // Jika sudah berupa link embed, gunakan langsung
-        // Tapi kita pastikan menggunakan https
-        embedUrl = videoUrl.replace('http://', 'https://');
+      let videoSrc = pura.video_trekking.trim();
+      
+      // Ubah Google Drive link ke embed
+      if (videoSrc.includes('drive.google.com')) {
+        let match = videoSrc.match(/[?&]id=([^&]+)/);
+        if (!match) {
+          match = videoSrc.match(/\/d\/([^\/]+)/);
+        }
+        if (match && match[1]) {
+          const fileId = match[1];
+          videoSrc = `https://drive.google.com/file/d/${fileId}/preview`;
+        }
       }
-      videoHTML = `
+      
+      // Jika masih link biasa, gunakan langsung
+      videoHtml = `
         <h3>🎥 Video Panduan Trekking</h3>
-        <div class="video-wrapper">
-          <iframe src="${embedUrl}" allow="autoplay" allowfullscreen></iframe>
+        <div class="trekking-video">
+          <iframe src="${videoSrc}" allowfullscreen loading="lazy" title="Video Trekking"></iframe>
         </div>
       `;
     }
@@ -369,10 +409,11 @@ async function loadData(){
       <div class="trekking-map">
         <img
           src="${pura.foto_trekking}"
-          alt="Peta Jalur Trekking">
+          alt="Peta Jalur Trekking"
+          loading="lazy">
       </div>
 
-      ${videoHTML}
+      ${videoHtml}
 
       <h3>📍 Informasi Jalur Trekking</h3>
 
