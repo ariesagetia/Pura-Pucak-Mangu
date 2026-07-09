@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Edit Data - Admin</title>
+    <link rel="manifest" href="manifest.json" />
+    <meta name="theme-color" content="#6c5ce7" />
+
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --secondary: #a29bfe;
+            --bg: #f0f2f5;
+            --card: rgba(255, 255, 255, 0.85);
+            --card-border: rgba(255, 255, 255, 0.3);
+            --text: #1e272e;
+            --muted: #576574;
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+            --radius: 28px;
+            --nav-bg: rgba(255, 255, 255, 0.85);
+            --success: #00b894;
+            --danger: #e74c3c;
+        }
+
+        body.dark {
+            --bg: #0f0e17;
+            --card: rgba(30, 30, 50, 0.85);
+            --card-border: rgba(255, 255, 255, 0.06);
+            --text: #fffffe;
+            --muted: #a7a9be;
+            --nav-bg: rgba(20, 20, 35, 0.9);
+            --shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            transition: background 0.4s, color 0.4s;
+            padding-bottom: 80px;
+        }
+
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 20px 20px 16px;
+            background: var(--card);
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+            border-bottom: 1px solid var(--card-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.04);
+            transition: background 0.4s;
+        }
+
+        header .header-inner {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        header h1 {
+            font-size: 1.2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .top-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .chip {
+            padding: 8px 16px;
+            border-radius: 40px;
+            background: rgba(108, 92, 231, 0.1);
+            border: 1px solid rgba(108, 92, 231, 0.2);
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--text);
+            cursor: pointer;
+            transition: 0.25s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            backdrop-filter: blur(4px);
+        }
+
+        .chip:hover {
+            background: var(--primary);
+            color: #fff;
+            border-color: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 60;
+            background: var(--nav-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            padding: 12px 12px 10px;
+            box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.06);
+            transition: background 0.4s;
+        }
+
+        .bottom-nav a {
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--muted);
+            font-size: 0.65rem;
+            font-weight: 600;
+            transition: 0.25s;
+            padding: 4px 12px;
+            border-radius: 30px;
+            gap: 2px;
+            position: relative;
+        }
+
+        .bottom-nav a .nav-icon {
+            font-size: 1.5rem;
+            line-height: 1;
+        }
+
+        .bottom-nav a.active {
+            color: var(--primary);
+        }
+
+        .bottom-nav a.active::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 10px;
+        }
+
+        .bottom-nav a:hover {
+            color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 18px 40px;
+        }
+
+        .card {
+            background: var(--card);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: var(--radius);
+            border: 1px solid var(--card-border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            margin-bottom: 24px;
+            padding: 24px 22px 28px;
+        }
+
+        .card h2 {
+            font-size: 1.3rem;
+            font-weight: 900;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 18px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 700;
+            margin-bottom: 6px;
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 14px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 0.95rem;
+            transition: 0.2s;
+            font-family: inherit;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group .helper {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 40px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 184, 148, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--muted);
+            color: #fff;
+            opacity: 0.7;
+        }
+
+        .btn-secondary:hover {
+            opacity: 1;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            color: var(--muted);
+            font-weight: 600;
+            padding: 30px;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(20px);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(12px);
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 0.9rem;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.4s ease;
+            z-index: 999;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .preview-img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 12px;
+            margin-top: 8px;
+            border: 1px solid var(--border);
+            object-fit: cover;
+        }
+
+        @media (max-width: 600px) {
+            .form-actions {
+                flex-direction: column;
+            }
+            .form-actions .btn {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="toast" id="toast"></div>
+
+    <header>
+        <div class="header-inner">
+            <h1>✏️ Edit Data</h1>
+            <div class="top-actions">
+                <a class="chip" href="admin.html">⬅ Kembali</a>
+                <button class="chip" onclick="toggleDarkMode()">🌙 Mode</button>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+
+        <div class="card" id="editCard">
+            <div class="loading">⏳ Memuat data...</div>
+        </div>
+
+    </div>
+
+    <nav class="bottom-nav">
+        <a href="index.html"><span class="nav-icon">🏠</span><span>Beranda</span></a>
+        <a href="favorites.html"><span class="nav-icon">⭐</span><span>Favorit</span></a>
+        <a href="homestay.html"><span class="nav-icon">🏡</span><span>Homestay</span></a>
+        <a href="admin.html" class="active"><span class="nav-icon">⚙️</span><span>Admin</span></a>
+    </nav>
+
+    <script>
+        // ===== KONFIGURASI =====
+        const API_URL = "https://script.google.com/macros/s/AKfycbyvn0sWv5qYuRFz8EmOXkGTcOv-KO7WMbDAvqya3RttyNGFz6dnePgbF9E9KgSsfGLW/exec";
+        const ADMIN_PASSWORD = "admin123"; // Ganti dengan password Anda
+
+        // ===== TOAST =====
+        function showToast(msg) {
+            const t = document.getElementById("toast");
+            t.textContent = msg;
+            t.classList.add("show");
+            clearTimeout(t._timeout);
+            t._timeout = setTimeout(() => t.classList.remove("show"), 3000);
+        }
+
+        // ===== DARK MODE =====
+        function loadDarkMode() {
+            const mode = localStorage.getItem("darkMode");
+            if (mode === "on") { document.body.classList.add("dark"); }
+        }
+
+        function toggleDarkMode() {
+            document.body.classList.toggle("dark");
+            localStorage.setItem("darkMode", document.body.classList.contains("dark") ? "on" : "off");
+            showToast(document.body.classList.contains("dark") ? "🌙 Mode Gelap" : "☀️ Mode Terang");
+        }
+
+        // ===== GET PARAM =====
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // ===== LOAD DATA =====
+        async function loadEditData() {
+            const sheet = getQueryParam('sheet') || 'sheet1';
+            const id = getQueryParam('id');
+
+            if (!id) {
+                document.getElementById('editCard').innerHTML = `<div class="loading">❌ ID tidak ditemukan.</div>`;
+                return;
+            }
+
+            const isNew = id === 'new';
+
+            try {
+                // Ambil data dari sheet
+                const url = API_URL + "?sheet=" + sheet;
+                const res = await fetch(url);
+                const json = await res.json();
+                const data = json.data || [];
+
+                let item = null;
+                if (!isNew) {
+                    item = data.find(row => String(row.id) === String(id));
+                    if (!item) {
+                        document.getElementById('editCard').innerHTML = `<div class="loading">❌ Data tidak ditemukan (id=${id}).</div>`;
+                        return;
+                    }
+                } else {
+                    // Data baru: buat objek kosong dengan id otomatis
+                    const maxId = data.reduce((max, row) => Math.max(max, Number(row.id) || 0), 0);
+                    item = {
+                        id: maxId + 1,
+                        nama: '',
+                        foto: '',
+                        deskripsi: '',
+                        nilai_spiritual: '',
+                        etika_berkunjung: '',
+                        jalur_trekking: '',
+                        foto_trekking: '',
+                        link_maps: ''
+                    };
+                    // Sesuaikan field untuk homestay
+                    if (sheet === 'homestay') {
+                        item = {
+                            id: maxId + 1,
+                            nama: '',
+                            deskripsi: '',
+                            foto: '',
+                            link_maps: ''
+                        };
+                    }
+                }
+
+                renderForm(item, sheet, isNew);
+
+            } catch (err) {
+                console.error(err);
+                document.getElementById('editCard').innerHTML = `<div class="loading">❌ Gagal memuat data: ${err.message}</div>`;
+                showToast('❌ Gagal memuat data');
+            }
+        }
+
+        // ===== RENDER FORM =====
+        function renderForm(item, sheet, isNew) {
+            const card = document.getElementById('editCard');
+
+            // Tentukan field yang akan ditampilkan berdasarkan sheet
+            let fields = [];
+            if (sheet === 'homestay') {
+                fields = ['id', 'nama', 'deskripsi', 'foto', 'link_maps'];
+            } else {
+                fields = ['id', 'nama', 'foto', 'deskripsi', 'nilai_spiritual', 'etika_berkunjung', 'jalur_trekking',
+                    'foto_trekking'
+                ];
+            }
+
+            let html = `
+                <h2>${isNew ? '➕ Tambah Data Baru' : '✏️ Edit Data'} - Sheet: ${sheet}</h2>
+                <form id="editForm" onsubmit="saveData(event)">
+            `;
+
+            fields.forEach(field => {
+                const label = field.replace(/_/g, ' ').toUpperCase();
+                const value = item[field] || '';
+                const isTextarea = ['deskripsi', 'nilai_spiritual', 'etika_berkunjung', 'jalur_trekking'].includes(field);
+
+                html += `
+                    <div class="form-group">
+                        <label for="field_${field}">${label}</label>
+                `;
+
+                if (field === 'id') {
+                    html += `
+                        <input type="number" id="field_${field}" value="${value}" readonly style="background:var(--border);cursor:not-allowed;" />
+                        <div class="helper">ID tidak dapat diubah</div>
+                    `;
+                } else if (isTextarea) {
+                    html += `
+                        <textarea id="field_${field}" rows="4">${value}</textarea>
+                    `;
+                } else if (field === 'foto' || field === 'foto_trekking' || field === 'link_maps') {
+                    html += `
+                        <input type="url" id="field_${field}" value="${value}" placeholder="https://..." />
+                        <div class="helper">Masukkan URL gambar atau link Google Maps</div>
+                        ${value && (field === 'foto' || field === 'foto_trekking') ? `<img src="${value}" class="preview-img" id="preview_${field}" />` : ''}
+                    `;
+                } else {
+                    html += `
+                        <input type="text" id="field_${field}" value="${value}" />
+                    `;
+                }
+
+                html += `</div>`;
+            });
+
+            // Tombol simpan
+            html += `
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-success">💾 Simpan</button>
+                        <a href="admin.html" class="btn btn-secondary">⬅ Batal</a>
+                        ${!isNew ? `<button type="button" class="btn btn-danger" onclick="deleteItem('${sheet}', ${item.id})">🗑 Hapus</button>` : ''}
+                    </div>
+                </form>
+            `;
+
+            card.innerHTML = html;
+
+            // Preview gambar saat URL berubah
+            document.querySelectorAll('input[type="url"]').forEach(input => {
+                input.addEventListener('input', function() {
+                    const field = this.id.replace('field_', '');
+                    const preview = document.getElementById('preview_' + field);
+                    if (preview && this.value) {
+                        preview.src = this.value;
+                        preview.style.display = 'block';
+                    } else if (preview) {
+                        preview.style.display = 'none';
+                    }
+                });
+            });
+        }
+
+        // ===== SAVE DATA =====
+        async function saveData(e) {
+            e.preventDefault();
+
+            const sheet = getQueryParam('sheet') || 'sheet1';
+            const id = getQueryParam('id');
+            const isNew = id === 'new';
+
+            // Kumpulkan data dari form
+            const form = document.getElementById('editForm');
+            const formData = new FormData(form);
+            const data = {};
+
+            // Tentukan field berdasarkan sheet
+            let fields = [];
+            if (sheet === 'homestay') {
+                fields = ['id', 'nama', 'deskripsi', 'foto', 'link_maps'];
+            } else {
+                fields = ['id', 'nama', 'foto', 'deskripsi', 'nilai_spiritual', 'etika_berkunjung', 'jalur_trekking',
+                    'foto_trekking'
+                ];
+            }
+
+            fields.forEach(field => {
+                const el = document.getElementById('field_' + field);
+                if (el) data[field] = el.value;
+            });
+
+            // Tambahkan password dan sheet
+            data.password = ADMIN_PASSWORD;
+            data.sheet = sheet;
+
+            // Jika baru, kirim flag _new
+            if (isNew) {
+                data._new = true;
+            }
+
+            try {
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await res.json();
+                if (result.status === 'success') {
+                    showToast('✅ Data berhasil disimpan!');
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 1000);
+                } else {
+                    showToast('❌ Gagal simpan: ' + (result.message || 'unknown error'));
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('❌ Error: ' + err.message);
+            }
+        }
+
+        // ===== DELETE =====
+        async function deleteItem(sheet, id) {
+            if (!confirm(`Hapus data id=${id} dari sheet "${sheet}"?`)) return;
+
+            try {
+                const body = {
+                    sheet: sheet,
+                    id: id,
+                    password: ADMIN_PASSWORD,
+                    _delete: true
+                };
+
+                const res = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+
+                const result = await res.json();
+                if (result.status === 'success') {
+                    showToast('✅ Data berhasil dihapus');
+                    setTimeout(() => {
+                        window.location.href = 'admin.html';
+                    }, 1000);
+                } else {
+                    showToast('❌ Gagal hapus: ' + (result.message || 'unknown error'));
+                }
+            } catch (err) {
+                console.error(err);
+                showToast('❌ Error: ' + err.message);
+            }
+        }
+
+        // ===== INIT =====
+        loadDarkMode();
+        loadEditData();
+    </script>
+
+</body>
+</html>
