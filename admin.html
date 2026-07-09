@@ -3,323 +3,872 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin Input Data - Puncak Mangu</title>
+  <title>Admin Panel - Pucak Mangu</title>
 
   <style>
+    /* ===== RESET & VARIABEL ===== */
     :root {
-      --primary: #2563eb;
-      --secondary: #9333ea;
-
-      --text: #0f172a;
-      --muted: #64748b;
-
-      --bg: #f1f5f9;
-      --card: rgba(255, 255, 255, 0.92);
-      --border: rgba(0,0,0,0.06);
-
-      --shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
-      --radius: 22px;
+      --primary: #6c5ce7;
+      --secondary: #a29bfe;
+      --accent: #00b894;
+      --bg: #f0f2f5;
+      --card: rgba(255, 255, 255, 0.75);
+      --card-border: rgba(255, 255, 255, 0.3);
+      --text: #1e272e;
+      --muted: #576574;
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
+      --radius: 28px;
+      --nav-bg: rgba(255, 255, 255, 0.85);
+      --transition: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
     }
 
     body.dark {
-      --text: #f8fafc;
-      --muted: #94a3b8;
-
-      --bg: #0b1220;
-      --card: rgba(20, 27, 45, 0.92);
-      --border: rgba(255,255,255,0.08);
-
-      --shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+      --bg: #0f0e17;
+      --card: rgba(30, 30, 50, 0.8);
+      --card-border: rgba(255, 255, 255, 0.06);
+      --text: #fffffe;
+      --muted: #a7a9be;
+      --nav-bg: rgba(20, 20, 35, 0.9);
+      --shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
     }
 
-    * { box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
 
     body {
-      margin: 0;
-      font-family: "Segoe UI", Arial, sans-serif;
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
       background: var(--bg);
       color: var(--text);
-      transition: 0.25s;
+      transition: background 0.5s, color 0.5s;
+      padding-bottom: 80px;
     }
 
+    /* ===== LOGIN OVERLAY ===== */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      transition: opacity 0.5s ease;
+    }
+    .login-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .login-box {
+      background: var(--card);
+      backdrop-filter: blur(12px);
+      border-radius: var(--radius);
+      padding: 40px 36px;
+      max-width: 400px;
+      width: 100%;
+      border: 1px solid var(--card-border);
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .login-box h1 {
+      font-size: 1.8rem;
+      font-weight: 900;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .login-box p {
+      color: var(--muted);
+      margin-bottom: 24px;
+      font-size: 0.9rem;
+    }
+    .login-box input {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 1rem;
+      margin-bottom: 16px;
+      transition: 0.2s;
+    }
+    .login-box input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+    }
+    .login-box .btn-login {
+      width: 100%;
+      padding: 14px;
+      border-radius: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: #fff;
+      font-weight: 700;
+      font-size: 1rem;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .login-box .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(108, 92, 231, 0.3);
+    }
+    .login-box .error-msg {
+      color: #e74c3c;
+      font-size: 0.85rem;
+      margin-top: 10px;
+      min-height: 24px;
+    }
+
+    /* ===== HEADER ===== */
     header {
       position: sticky;
       top: 0;
-      z-index: 99;
-      padding: 18px;
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
-      color: white;
-      border-bottom-left-radius: 26px;
-      border-bottom-right-radius: 26px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.14);
+      z-index: 50;
+      padding: 20px 20px 16px;
+      background: var(--card);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-bottom: 1px solid var(--card-border);
+      box-shadow: 0 4px 30px rgba(0,0,0,0.04);
+      transition: background 0.4s;
     }
-
-    header h1 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 900;
-    }
-
-    header p {
-      margin: 6px 0 0;
-      font-size: 12px;
-      opacity: 0.9;
-    }
-
-    .top-actions {
-      margin-top: 12px;
+    header .header-inner {
+      max-width: 1000px;
+      margin: 0 auto;
       display: flex;
-      gap: 10px;
+      justify-content: space-between;
+      align-items: center;
       flex-wrap: wrap;
+      gap: 10px;
     }
-
+    header h1 {
+      font-size: 1.2rem;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .top-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
     .chip {
-      padding: 8px 14px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.18);
-      border: 1px solid rgba(255,255,255,0.22);
-      font-size: 12px;
-      font-weight: 800;
+      padding: 8px 16px;
+      border-radius: 40px;
+      background: rgba(108, 92, 231, 0.1);
+      border: 1px solid rgba(108, 92, 231, 0.2);
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text);
       cursor: pointer;
-      transition: 0.2s;
-      user-select: none;
+      transition: 0.25s;
       text-decoration: none;
-      color: white;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(4px);
     }
-
     .chip:hover {
-      background: rgba(255,255,255,0.26);
+      background: var(--primary);
+      color: #fff;
+      border-color: var(--primary);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+    }
+    .chip-logout {
+      background: rgba(231, 76, 60, 0.15);
+      border-color: rgba(231, 76, 60, 0.3);
+      color: #e74c3c;
+    }
+    .chip-logout:hover {
+      background: #e74c3c;
+      color: #fff;
+      border-color: #e74c3c;
     }
 
-    .container {
-      max-width: 950px;
-      margin: auto;
-      padding: 18px;
-      padding-bottom: 90px;
+    /* ===== BOTTOM NAV ===== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      z-index: 60;
+      background: var(--nav-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 12px 12px 10px;
+      box-shadow: 0 -4px 30px rgba(0,0,0,0.06);
+      transition: background 0.4s;
     }
+    .bottom-nav a {
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.65rem;
+      font-weight: 600;
+      transition: 0.25s;
+      padding: 4px 12px;
+      border-radius: 30px;
+      gap: 2px;
+      position: relative;
+    }
+    .bottom-nav a .nav-icon { font-size: 1.5rem; line-height: 1; }
+    .bottom-nav a.active { color: var(--primary); }
+    .bottom-nav a.active::after {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 10px;
+    }
+    .bottom-nav a:hover { color: var(--primary); transform: translateY(-2px); }
 
+    /* ===== CONTAINER ===== */
+    .container { max-width: 1000px; margin: 0 auto; padding: 20px 18px 40px; }
+
+    /* ===== CARD ===== */
     .card {
       background: var(--card);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-radius: var(--radius);
-      padding: 18px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--card-border);
       box-shadow: var(--shadow);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      margin-bottom: 24px;
+      padding: 24px 22px 28px;
     }
-
-    label {
+    .card h2 {
+      font-size: 1.4rem;
       font-weight: 900;
-      font-size: 13px;
-      display: block;
-      margin-top: 14px;
-      margin-bottom: 6px;
+      margin-bottom: 16px;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
     }
 
-    input, textarea {
+    /* ===== TABEL ===== */
+    .table-wrap { overflow-x: auto; }
+    table {
       width: 100%;
-      padding: 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(0,0,0,0.12);
-      font-size: 14px;
-      outline: none;
-      font-family: inherit;
+      border-collapse: collapse;
+      font-size: 0.85rem;
     }
-
-    body.dark input, body.dark textarea {
-      background: rgba(0,0,0,0.25);
-      border: 1px solid rgba(255,255,255,0.15);
-      color: white;
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
     }
-
-    textarea {
-      min-height: 130px;
-      resize: vertical;
-      line-height: 1.6;
+    th {
+      background: rgba(108, 92, 231, 0.08);
+      color: var(--primary);
+      font-weight: 800;
+      position: sticky;
+      top: 0;
     }
-
-    .btn {
-      margin-top: 18px;
-      width: 100%;
-      padding: 14px;
-      border-radius: 16px;
+    td { color: var(--muted); }
+    .btn-sm {
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 700;
       border: none;
       cursor: pointer;
-      font-size: 14px;
+      transition: 0.2s;
+      text-decoration: none;
+      display: inline-block;
+    }
+    .btn-edit {
+      background: var(--primary);
+      color: #fff;
+    }
+    .btn-edit:hover { transform: scale(1.05); }
+    .btn-delete {
+      background: #e74c3c;
+      color: #fff;
+    }
+    .btn-delete:hover { transform: scale(1.05); }
+    .btn-add {
+      background: var(--accent);
+      color: #fff;
+    }
+    .btn-add:hover { transform: scale(1.05); }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+    .modal {
+      background: var(--card);
+      border-radius: var(--radius);
+      max-width: 700px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 28px 26px 32px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+      animation: modalIn 0.3s ease;
+    }
+    @keyframes modalIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .modal h2 {
+      font-size: 1.3rem;
       font-weight: 900;
-      color: white;
+      color: var(--primary);
+      margin-bottom: 20px;
+    }
+    .modal label {
+      display: block;
+      font-weight: 700;
+      font-size: 0.85rem;
+      margin-top: 14px;
+      margin-bottom: 4px;
+      color: var(--text);
+    }
+    .modal input, .modal textarea, .modal select {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+      transition: 0.2s;
+    }
+    .modal input:focus, .modal textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+    }
+    .modal textarea { min-height: 80px; resize: vertical; }
+    .modal .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+      flex-wrap: wrap;
+    }
+    .modal .btn-row .btn {
+      flex: 1;
+      min-width: 100px;
+      padding: 12px 20px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: none;
+      cursor: pointer;
+      transition: 0.2s;
+      text-align: center;
+    }
+    .btn-save {
       background: linear-gradient(135deg, var(--primary), var(--secondary));
-      box-shadow: 0 14px 30px rgba(37, 99, 235, 0.28);
+      color: #fff;
     }
-
-    .btn:hover {
-      opacity: 0.95;
+    .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(108,92,231,0.3); }
+    .btn-cancel {
+      background: rgba(0,0,0,0.08);
+      color: var(--text);
     }
+    .btn-cancel:hover { background: rgba(0,0,0,0.15); }
 
-    .msg {
-      margin-top: 14px;
-      font-weight: 900;
-      text-align: center;
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      bottom: 100px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(12px);
+      color: #fff;
+      padding: 14px 28px;
+      border-radius: 40px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.4s ease;
+      z-index: 9999;
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
     }
+    .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
-    .preview {
-      margin-top: 14px;
-      text-align: center;
-    }
+    /* ===== LOADING ===== */
+    .loading { text-align: center; color: var(--muted); font-weight: 600; padding: 30px; }
 
-    .preview img {
-      max-width: 100%;
-      border-radius: 18px;
-      box-shadow: var(--shadow);
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 480px) {
+      header h1 { font-size: 1rem; }
+      .chip { font-size: 0.65rem; padding: 6px 12px; }
+      .modal { padding: 20px; }
+      th, td { padding: 6px 8px; font-size: 0.75rem; }
+      .login-box { padding: 28px 20px; }
     }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>🛠 Admin Input Data Puncak Mangu</h1>
-  <p>Data langsung tersimpan ke Google Sheet (id=1)</p>
+  <!-- TOAST -->
+  <div class="toast" id="toast"></div>
 
-  <div class="top-actions">
-    <a class="chip" href="index.html">🏠 Home</a>
-    <div class="chip" onclick="toggleDarkMode()">🌙 Dark Mode</div>
+  <!-- LOGIN OVERLAY -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-box">
+      <h1>🔐 Admin Panel</h1>
+      <p>Masukkan password untuk mengakses panel admin</p>
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <input type="password" id="passwordInput" placeholder="Masukkan password..." required />
+        <button type="submit" class="btn-login">Login</button>
+        <div class="error-msg" id="loginError"></div>
+      </form>
+    </div>
   </div>
-</header>
 
-<div class="container">
-  <div class="card">
+  <!-- MODAL -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+      <h2 id="modalTitle">✏️ Edit Data</h2>
+      <form id="editForm" onsubmit="saveData(event)">
+        <input type="hidden" id="editId" />
+        <input type="hidden" id="editSheet" value="Sheet1" />
 
-    <label>Password Admin</label>
-    <input type="password" id="password" placeholder="Masukkan password admin">
+        <div id="formFields">
+          <!-- field akan di-generate oleh JavaScript -->
+        </div>
 
-    <label>Nama Destinasi</label>
-    <input type="text" id="nama" placeholder="Puncak Mangu">
+        <div class="btn-row">
+          <button type="submit" class="btn btn-save">💾 Simpan</button>
+          <button type="button" class="btn btn-cancel" onclick="closeModal()">Batal</button>
+        </div>
+      </form>
+    </div>
+  </div>
 
-    <label>Link Foto (URL)</label>
-    <input type="text" id="foto" placeholder="https://drive.google.com/thumbnail?id=....">
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <h1>⚙️ Admin Panel</h1>
+      <div class="top-actions">
+        <a class="chip" href="index.html">🏠 Home</a>
+        <button class="chip" onclick="toggleDarkMode()">🌙 Mode</button>
+        <button class="chip" onclick="loadAllData()">🔄 Refresh</button>
+        <button class="chip chip-logout" onclick="logout()">🚪 Logout</button>
+      </div>
+    </div>
+  </header>
 
-    <div class="preview" id="previewBox"></div>
+  <!-- MAIN -->
+  <div class="container" id="mainContent" style="display:none;">
 
-    <label>Deskripsi Pura</label>
-    <textarea id="deskripsi"></textarea>
+    <!-- Sheet 1: Pura -->
+    <div class="card" id="sheet1Container">
+      <h2>
+        <span>🏛️ Data Pura</span>
+        <button class="btn-sm btn-add" onclick="openAdd('Sheet1')">+ Tambah</button>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nama</th>
+              <th>Deskripsi (ringkas)</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="sheet1Body">
+            <tr><td colspan="4" class="loading">⏳ Memuat...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
-    <label>Nilai Spiritual</label>
-    <textarea id="nilai_spiritual"></textarea>
-
-    <label>Etika Berkunjung</label>
-    <textarea id="etika_berkunjung"></textarea>
-
-    <label>Jalur Trekking</label>
-    <textarea id="jalur_trekking"></textarea>
-
-    <button class="btn" onclick="simpanData()">💾 Simpan ke Google Sheet</button>
-
-    <div class="msg" id="msgBox"></div>
+    <!-- Sheet 2: Homestay -->
+    <div class="card" id="homestayContainer">
+      <h2>
+        <span>🏡 Data Informasi Layanan Pendampingan Pengunjung dan Akomodasi</span>
+        <button class="btn-sm btn-add" onclick="openAdd('homestay')">+ Tambah</button>
+      </h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nama</th>
+              <th>Deskripsi (ringkas)</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="homestayBody">
+            <tr><td colspan="4" class="loading">⏳ Memuat...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 
   </div>
-</div>
 
-<script>
-  // GANTI DENGAN URL APPS SCRIPT ANDA
-  const apiURL = "https://script.google.com/macros/s/AKfycbyCaDzpbAvtFbD-uNLix2hKZO_-qEn_mpdEAKJWO7zqvCEHslj8gxcUUX2MFTALB9sQ/exec";
+  <!-- BOTTOM NAV -->
+  <nav class="bottom-nav">
+    <a href="index.html"><span class="nav-icon">🏠</span><span>Beranda</span></a>
+    <a href="favorites.html"><span class="nav-icon">⭐</span><span>Favorit</span></a>
+    <a href="homestay.html"><span class="nav-icon">🏡</span><span>Homestay</span></a>
+    <a href="#" onclick="toggleDarkMode(); return false;"><span class="nav-icon" id="navDarkIcon">🌙</span><span>Mode</span></a>
+  </nav>
 
-  function loadDarkMode() {
-    const mode = localStorage.getItem("darkMode");
-    if (mode === "on") document.body.classList.add("dark");
-  }
+  <script>
+    // ===== KONFIGURASI =====
+    const API_URL = "https://script.google.com/macros/s/AKfycbyvn0sWv5qYuRFz8EmOXkGTcOv-KO7WMbDAvqya3RttyNGFz6dnePgbF9E9KgSsfGLW/exec";
+    const ADMIN_PASSWORD = "admin123"; // Ganti dengan password Anda
 
-  function toggleDarkMode() {
-    document.body.classList.toggle("dark");
+    let allData = { sheet1: [], homestay: [] };
+    let isAuthenticated = false;
 
-    if (document.body.classList.contains("dark")) {
-      localStorage.setItem("darkMode", "on");
-    } else {
-      localStorage.setItem("darkMode", "off");
-    }
-  }
-
-  function showPreview(url) {
-    if (!url) {
-      document.getElementById("previewBox").innerHTML = "";
-      return;
-    }
-
-    document.getElementById("previewBox").innerHTML = `
-      <p style="font-weight:900;color:gray;">Preview Foto</p>
-      <img src="${url}">
-    `;
-  }
-
-  document.getElementById("foto").addEventListener("input", function() {
-    showPreview(this.value);
-  });
-
-  async function loadExistingData() {
-    try {
-      const res = await fetch(apiURL);
-      const json = await res.json();
-      const data = json.data;
-
-      const pura = data.find(item => Number(item.id) === 1);
-
-      if (pura) {
-        document.getElementById("nama").value = pura.nama || "";
-        document.getElementById("foto").value = pura.foto || "";
-        document.getElementById("deskripsi").value = pura.deskripsi || "";
-        document.getElementById("nilai_spiritual").value = pura.nilai_spiritual || "";
-        document.getElementById("etika_berkunjung").value = pura.etika_berkunjung || "";
-        document.getElementById("jalur_trekking").value = pura.jalur_trekking || "";
-
-        showPreview(pura.foto);
-      }
-    } catch (err) {
-      console.log("Gagal load data awal:", err);
-    }
-  }
-
-  async function simpanData() {
-    const msgBox = document.getElementById("msgBox");
-    msgBox.style.color = "gray";
-    msgBox.innerHTML = "⏳ Mengirim data...";
-
-    const payload = {
-      password: document.getElementById("password").value,
-      nama: document.getElementById("nama").value,
-      foto: document.getElementById("foto").value,
-      deskripsi: document.getElementById("deskripsi").value,
-      nilai_spiritual: document.getElementById("nilai_spiritual").value,
-      etika_berkunjung: document.getElementById("etika_berkunjung").value,
-      jalur_trekking: document.getElementById("jalur_trekking").value
-    };
-
-    try {
-      const res = await fetch(apiURL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const result = await res.json();
-
-      if (result.status === "success") {
-        msgBox.style.color = "green";
-        msgBox.innerHTML = "✅ " + result.message;
+    // ===== LOGIN =====
+    function handleLogin(e) {
+      e.preventDefault();
+      const input = document.getElementById('passwordInput');
+      const error = document.getElementById('loginError');
+      if (input.value === ADMIN_PASSWORD) {
+        error.textContent = '';
+        isAuthenticated = true;
+        sessionStorage.setItem('adminAuth', 'true');
+        document.getElementById('loginOverlay').classList.add('hidden');
+        document.getElementById('mainContent').style.display = 'block';
+        loadAllData();
       } else {
-        msgBox.style.color = "red";
-        msgBox.innerHTML = "❌ " + result.message;
+        error.textContent = '❌ Password salah!';
+        input.value = '';
+        input.focus();
+      }
+    }
+
+    function logout() {
+      sessionStorage.removeItem('adminAuth');
+      isAuthenticated = false;
+      document.getElementById('loginOverlay').classList.remove('hidden');
+      document.getElementById('mainContent').style.display = 'none';
+      document.getElementById('passwordInput').value = '';
+      document.getElementById('loginError').textContent = '';
+    }
+
+    function checkAuth() {
+      if (sessionStorage.getItem('adminAuth') === 'true') {
+        isAuthenticated = true;
+        document.getElementById('loginOverlay').classList.add('hidden');
+        document.getElementById('mainContent').style.display = 'block';
+        loadAllData();
+      } else {
+        document.getElementById('loginOverlay').classList.remove('hidden');
+        document.getElementById('mainContent').style.display = 'none';
+      }
+    }
+
+    // ===== DARK MODE =====
+    function loadDarkMode() {
+      const mode = localStorage.getItem("darkMode");
+      if (mode === "on") { document.body.classList.add("dark"); updateDarkUI(true); }
+      else updateDarkUI(false);
+    }
+    function toggleDarkMode() {
+      const isDark = document.body.classList.toggle("dark");
+      localStorage.setItem("darkMode", isDark ? "on" : "off");
+      updateDarkUI(isDark);
+      showToast(isDark ? "🌙 Mode Gelap" : "☀️ Mode Terang");
+    }
+    function updateDarkUI(isDark) {
+      const icon = document.querySelector('#navDarkIcon');
+      if (icon) icon.textContent = isDark ? "☀️" : "🌙";
+    }
+
+    // ===== TOAST =====
+    function showToast(msg, isError = false) {
+      const t = document.getElementById("toast");
+      t.textContent = msg;
+      t.style.background = isError ? "rgba(200,50,50,0.9)" : "rgba(0,0,0,0.8)";
+      t.classList.add("show");
+      clearTimeout(t._timeout);
+      t._timeout = setTimeout(() => t.classList.remove("show"), 3000);
+    }
+
+    // ===== LOAD DATA =====
+    async function loadSheetData(sheetName) {
+      try {
+        const res = await fetch(`${API_URL}?sheet=${sheetName}`);
+        const json = await res.json();
+        if (json.status === "error") {
+          showToast("❌ " + json.message, true);
+          return [];
+        }
+        return json.data || [];
+      } catch (err) {
+        console.error(err);
+        showToast("❌ Gagal memuat data " + sheetName, true);
+        return [];
+      }
+    }
+
+    async function loadAllData() {
+      if (!isAuthenticated) return;
+      document.getElementById("sheet1Body").innerHTML = "<tr><td colspan='4' class='loading'>⏳ Memuat...</td></tr>";
+      document.getElementById("homestayBody").innerHTML = "<tr><td colspan='4' class='loading'>⏳ Memuat...</td></tr>";
+
+      const [sheet1, homestay] = await Promise.all([
+        loadSheetData("Sheet1"),
+        loadSheetData("homestay")
+      ]);
+
+      allData.sheet1 = sheet1;
+      allData.homestay = homestay;
+
+      renderTable("sheet1Body", sheet1, "Sheet1");
+      renderTable("homestayBody", homestay, "homestay");
+    }
+
+    // ===== RENDER TABEL =====
+    function renderTable(tbodyId, data, sheetName) {
+      const tbody = document.getElementById(tbodyId);
+      if (!data || data.length === 0) {
+        tbody.innerHTML = "<tr><td colspan='4' class='loading'>📭 Tidak ada data</td></tr>";
+        return;
       }
 
-    } catch (err) {
-      console.error(err);
-      msgBox.style.color = "red";
-      msgBox.innerHTML = "❌ Gagal mengirim data ke server.";
+      let html = "";
+      data.forEach(item => {
+        const desc = (item.deskripsi || "").substring(0, 50) + (item.deskripsi && item.deskripsi.length > 50 ? "..." : "");
+        html += `
+          <tr>
+            <td>${item.id || "-"}</td>
+            <td><strong>${item.nama || "-"}</strong></td>
+            <td>${desc || "-"}</td>
+            <td>
+              <button class="btn-sm btn-edit" onclick="openEdit(${item.id}, '${sheetName}')">✏️ Edit</button>
+              <button class="btn-sm btn-delete" onclick="deleteData(${item.id}, '${sheetName}')">🗑️</button>
+            </td>
+          </tr>
+        `;
+      });
+      tbody.innerHTML = html;
     }
-  }
 
-  loadDarkMode();
-  loadExistingData();
-</script>
+    // ===== RENDER FORM FIELDS =====
+    function renderFormFields(sheetName, data = null) {
+      const container = document.getElementById('formFields');
+      let html = '';
+
+      html += `
+        <label for="editNama">Nama</label>
+        <input type="text" id="editNama" value="${data?.nama || ''}" required />
+      `;
+
+      if (sheetName === 'homestay') {
+        html += `
+          <label for="editDeskripsi">Deskripsi</label>
+          <textarea id="editDeskripsi" rows="4">${data?.deskripsi || ''}</textarea>
+          <label for="editFoto">URL Foto</label>
+          <input type="url" id="editFoto" value="${data?.foto || ''}" placeholder="https://..." />
+          <label for="editLinkMaps">Link Google Maps</label>
+          <input type="url" id="editLinkMaps" value="${data?.link_maps || ''}" placeholder="https://maps.app.goo.gl/..." />
+        `;
+      } else {
+        html += `
+          <label for="editFoto">URL Foto</label>
+          <input type="url" id="editFoto" value="${data?.foto || ''}" placeholder="https://..." />
+          <label for="editFotoTrekking">URL Foto Trekking</label>
+          <input type="url" id="editFotoTrekking" value="${data?.foto_trekking || ''}" placeholder="https://..." />
+          <label for="editDeskripsi">Deskripsi</label>
+          <textarea id="editDeskripsi" rows="4">${data?.deskripsi || ''}</textarea>
+          <label for="editSpiritual">Nilai Spiritual</label>
+          <textarea id="editSpiritual" rows="3">${data?.nilai_spiritual || ''}</textarea>
+          <label for="editEtika">Etika Berkunjung</label>
+          <textarea id="editEtika" rows="3">${data?.etika_berkunjung || ''}</textarea>
+          <label for="editTrekking">Jalur Trekking</label>
+          <textarea id="editTrekking" rows="3">${data?.jalur_trekking || ''}</textarea>
+        `;
+      }
+
+      container.innerHTML = html;
+    }
+
+    // ===== MODAL =====
+    function openModal(title, data = null) {
+      document.getElementById("modalTitle").textContent = title;
+      document.getElementById("modalOverlay").classList.add("show");
+
+      const sheetName = data?.sheet || "Sheet1";
+      document.getElementById("editSheet").value = sheetName;
+      document.getElementById("editId").value = data?.id || "";
+
+      renderFormFields(sheetName, data);
+    }
+
+    function closeModal() {
+      document.getElementById("modalOverlay").classList.remove("show");
+    }
+
+    // ===== OPEN EDIT =====
+    function openEdit(id, sheetName) {
+      const data = sheetName === "homestay" ? allData.homestay : allData.sheet1;
+      const item = data.find(d => Number(d.id) === Number(id));
+      if (!item) {
+        showToast("❌ Data tidak ditemukan", true);
+        return;
+      }
+      item.sheet = sheetName;
+      openModal(`✏️ Edit ${item.nama || "Data"} (ID: ${id})`, item);
+    }
+
+    // ===== OPEN ADD =====
+    function openAdd(sheetName) {
+      // Tentukan ID baru: max ID + 1
+      const data = sheetName === "homestay" ? allData.homestay : allData.sheet1;
+      let maxId = 0;
+      data.forEach(item => {
+        if (Number(item.id) > maxId) maxId = Number(item.id);
+      });
+      const newId = maxId + 1;
+
+      const emptyData = {
+        sheet: sheetName,
+        id: newId,
+        nama: "",
+        foto: "",
+        foto_trekking: "",
+        deskripsi: "",
+        nilai_spiritual: "",
+        etika_berkunjung: "",
+        jalur_trekking: "",
+        link_maps: ""
+      };
+      openModal(`➕ Tambah Data Baru di ${sheetName}`, emptyData);
+    }
+
+    // ===== SAVE DATA =====
+    async function saveData(e) {
+      e.preventDefault();
+
+      const id = document.getElementById("editId").value;
+      const sheet = document.getElementById("editSheet").value;
+      const nama = document.getElementById("editNama").value;
+      const deskripsi = document.getElementById("editDeskripsi").value;
+      const foto = document.getElementById("editFoto").value;
+
+      let body = {
+        password: ADMIN_PASSWORD,
+        sheet: sheet,
+        id: id || null,
+        nama: nama,
+        deskripsi: deskripsi,
+        foto: foto
+      };
+
+      if (sheet === "homestay") {
+        body.link_maps = document.getElementById("editLinkMaps").value;
+      } else {
+        body.foto_trekking = document.getElementById("editFotoTrekking").value;
+        body.nilai_spiritual = document.getElementById("editSpiritual").value;
+        body.etika_berkunjung = document.getElementById("editEtika").value;
+        body.jalur_trekking = document.getElementById("editTrekking").value;
+      }
+
+      await sendSave(body, sheet);
+    }
+
+    async function sendSave(body, sheetName) {
+      try {
+        showToast("⏳ Menyimpan data...");
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(body)
+        });
+        const result = await res.json();
+
+        if (result.status === "success") {
+          showToast("✅ " + result.message);
+          closeModal();
+          loadAllData();
+        } else {
+          showToast("❌ " + (result.message || "Gagal menyimpan"), true);
+        }
+      } catch (err) {
+        console.error(err);
+        showToast("❌ Error: " + err.message, true);
+      }
+    }
+
+    // ===== DELETE DATA =====
+    async function deleteData(id, sheetName) {
+      if (!confirm(`Hapus data ID ${id} dari ${sheetName}?`)) return;
+
+      try {
+        const body = {
+          password: ADMIN_PASSWORD,
+          sheet: sheetName,
+          id: id,
+          _delete: true
+        };
+
+        showToast("⏳ Menghapus data...");
+        const res = await fetch(API_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(body)
+        });
+        const result = await res.json();
+
+        if (result.status === "success") {
+          showToast("✅ " + result.message);
+          loadAllData();
+        } else {
+          showToast("❌ " + (result.message || "Gagal menghapus"), true);
+        }
+      } catch (err) {
+        console.error(err);
+        showToast("❌ Error: " + err.message, true);
+      }
+    }
+
+    // ===== INIT =====
+    loadDarkMode();
+    checkAuth();
+
+    // Tutup modal dengan ESC
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") closeModal();
+    });
+    document.getElementById("modalOverlay").addEventListener("click", (e) => {
+      if (e.target === e.currentTarget) closeModal();
+    });
+  </script>
 
 </body>
 </html>
