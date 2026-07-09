@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tourist Information</title>
+<title>Tourist Information - Homestay</title>
 
 <style>
 :root{
@@ -138,6 +138,7 @@ header h1{
 .card h2{
   margin-top:0;
   color:var(--primary);
+  font-size:18px;
 }
 
 .card p{
@@ -161,6 +162,11 @@ header h1{
   color:white;
   text-decoration:none;
   font-weight:700;
+  transition:0.2s;
+}
+
+.btn:hover{
+  transform:translateY(-2px);
 }
 
 .loading{
@@ -168,13 +174,34 @@ header h1{
   font-weight:900;
   color:var(--muted);
 }
+
+.homestay-img{
+  width:100%;
+  height:200px;
+  object-fit:cover;
+  border-radius:12px;
+  margin-bottom:12px;
+  border:1px solid var(--border);
+}
+
+.homestay-grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+}
+
+@media(min-width:720px){
+  .homestay-grid{
+    grid-template-columns:1fr 1fr;
+  }
+}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>🏡 Tourist Information</h1>
+  <h1>🏡 Tourist Information - Homestay</h1>
 
   <div class="top-actions">
     <a class="chip" href="index.html">🏠 Home</a>
@@ -194,80 +221,128 @@ header h1{
     Rekomendasi akomodasi di sekitar kawasan Pura Puncak Mangu untuk wisatawan yang ingin menginap dan menikmati suasana pegunungan Pelaga.
   </div>
 
-  <div class="card">
-    <h2>🏡 RUMAHKU Homestay</h2>
-    <p>
-      Homestay yang berada di kawasan Desa Wisata Pelaga. Cocok bagi wisatawan yang ingin merasakan suasana pedesaan Bali yang tenang dan dekat dengan kawasan Puncak Mangu.
-    </p>
-    <a class="btn" href="https://maps.app.goo.gl/2cVqo9ZrhbCCwKEZ6?g_st=aw" target="_blank">
-      📍 Buka di Google Maps
-    </a>
-  </div>
-
-  <div class="card">
-    <h2>🌿 Bagus Agro Pelaga</h2>
-    <p>
-      Resort dan agrowisata yang berada di kawasan Pelaga, dekat dengan Pura Penataran Agung Puncak Mangu. Menawarkan suasana pegunungan yang sejuk dan area perkebunan yang luas.
-    </p>
-    <a class="btn" href="https://maps.app.goo.gl/ZKebWWM82Ypwnv6h8?g_st=aw" target="_blank">
-      📍 Buka di Google Maps
-    </a>
-  </div>
-
-  <div class="card">
-    <h2>🏕 Pondok Nirbana</h2>
-    <p>
-      Pilihan akomodasi dengan suasana alam pegunungan yang tenang. Cocok untuk wisatawan yang ingin bermalam sebelum atau sesudah melakukan trekking menuju Pura Puncak Mangu.
-    </p>
-    <a class="btn" href="https://maps.app.goo.gl/TZpF5oEcMfkySzJY6?g_st=aw" target="_blank">
-      📍 Buka di Google Maps
-    </a>
+  <div id="homestayContainer">
+    <div class="loading">⏳ Memuat data homestay...</div>
   </div>
 
 </div>
 
 <script>
-const apiURL="https://script.google.com/macros/s/AKfycbyCaDzpbAvtFbD-uNLix2hKZO_-qEn_mpdEAKJWO7zqvCEHslj8gxcUUX2MFTALB9sQ/exec";
+// ===== KONFIGURASI =====
+const API_URL = "https://script.google.com/macros/s/AKfycbyvn0sWv5qYuRFz8EmOXkGTcOv-KO7WMbDAvqya3RttyNGFz6dnePgbF9E9KgSsfGLW/exec";
 
-function loadDarkMode(){
-  const mode=localStorage.getItem("darkMode");
-  if(mode==="on") document.body.classList.add("dark");
+// Data statis sebagai fallback jika tidak ada data dari GSheet
+const STATIC_HOMESTAY = [
+  {
+    id: 1,
+    nama: "RUMAHKU Homestay",
+    deskripsi: "Homestay yang berada di kawasan Desa Wisata Pelaga. Cocok bagi wisatawan yang ingin merasakan suasana pedesaan Bali yang tenang dan dekat dengan kawasan Puncak Mangu.",
+    foto: "https://via.placeholder.com/600x400/2563eb/ffffff?text=RUMAHKU",
+    link_maps: "https://maps.app.goo.gl/2cVqo9ZrhbCCwKEZ6?g_st=aw"
+  },
+  {
+    id: 2,
+    nama: "Bagus Agro Pelaga",
+    deskripsi: "Resort dan agrowisata yang berada di kawasan Pelaga, dekat dengan Pura Penataran Agung Puncak Mangu. Menawarkan suasana pegunungan yang sejuk dan area perkebunan yang luas.",
+    foto: "https://via.placeholder.com/600x400/22c55e/ffffff?text=Bagus+Agro",
+    link_maps: "https://maps.app.goo.gl/ZKebWWM82Ypwnv6h8?g_st=aw"
+  },
+  {
+    id: 3,
+    nama: "Pondok Nirbana",
+    deskripsi: "Pilihan akomodasi dengan suasana alam pegunungan yang tenang. Cocok untuk wisatawan yang ingin bermalam sebelum atau sesudah melakukan trekking menuju Pura Puncak Mangu.",
+    foto: "https://via.placeholder.com/600x400/9333ea/ffffff?text=Pondok+Nirbana",
+    link_maps: "https://maps.app.goo.gl/TZpF5oEcMfkySzJY6?g_st=aw"
+  }
+];
+
+// ===== DARK MODE =====
+function loadDarkMode() {
+  const mode = localStorage.getItem("darkMode");
+  if (mode === "on") document.body.classList.add("dark");
 }
 
-function toggleDarkMode(){
+function toggleDarkMode() {
   document.body.classList.toggle("dark");
-
-  if(document.body.classList.contains("dark")){
-    localStorage.setItem("darkMode","on");
-  }else{
-    localStorage.setItem("darkMode","off");
+  if (document.body.classList.contains("dark")) {
+    localStorage.setItem("darkMode", "on");
+  } else {
+    localStorage.setItem("darkMode", "off");
   }
 }
 
-async function loadHeaderImage(){
-  try{
-    const res=await fetch(apiURL);
-    const json=await res.json();
+// ===== AMBIL DATA HOMESTAY =====
+async function loadHomestay() {
+  const container = document.getElementById("homestayContainer");
+  try {
+    // Coba ambil dari API dengan parameter sheet=homestay
+    const url = API_URL + "?sheet=homestay";
+    const res = await fetch(url);
+    const json = await res.json();
+    let data = json.data || [];
 
-    const pura=json.data.find(
-      item=>Number(item.id)===1
-    );
+    // Jika data kosong, gunakan statis
+    if (!data || data.length === 0) {
+      console.warn("Data homestay kosong, menggunakan fallback statis.");
+      data = STATIC_HOMESTAY;
+    }
 
-    document.getElementById("heroBox").innerHTML=`
-      <img src="${pura.foto}" alt="${pura.nama}">
-      <div class="hero-overlay"></div>
-      <div class="hero-title">
-        <h2>${pura.nama}</h2>
+    renderHomestay(data);
+  } catch (err) {
+    console.error("Gagal fetch homestay, gunakan statis.", err);
+    renderHomestay(STATIC_HOMESTAY);
+  }
+}
+
+// ===== RENDER HOMESTAY =====
+function renderHomestay(data) {
+  const container = document.getElementById("homestayContainer");
+  if (!data || data.length === 0) {
+    container.innerHTML = "<div class='loading'>🏡 Belum ada data homestay.</div>";
+    return;
+  }
+
+  let html = `<div class="homestay-grid">`;
+  data.forEach(item => {
+    const imgSrc = item.foto || "https://via.placeholder.com/600x400/cccccc/333333?text=No+Image";
+    html += `
+      <div class="card">
+        <img class="homestay-img" src="${imgSrc}" alt="${item.nama}" loading="lazy">
+        <h2>${item.nama}</h2>
+        <p>${item.deskripsi || ""}</p>
+        <a class="btn" href="${item.link_maps || "#"}" target="_blank">📍 Buka di Google Maps</a>
       </div>
     `;
-  }catch(err){
-    document.getElementById("heroBox").innerHTML=
-      "<div class='loading' style='padding:40px'>❌ Foto gagal dimuat</div>";
+  });
+  html += `</div>`;
+  container.innerHTML = html;
+}
+
+// ===== AMBIL FOTO HERO (dari data pura) =====
+async function loadHeroImage() {
+  try {
+    const res = await fetch(API_URL);
+    const json = await res.json();
+    const pura = json.data.find(item => Number(item.id) === 1);
+    if (pura) {
+      document.getElementById("heroBox").innerHTML = `
+        <img src="${pura.foto}" alt="${pura.nama}">
+        <div class="hero-overlay"></div>
+        <div class="hero-title">
+          <h2>${pura.nama}</h2>
+        </div>
+      `;
+    }
+  } catch (err) {
+    document.getElementById("heroBox").innerHTML = "<div class='loading' style='padding:40px;'>❌ Foto gagal dimuat</div>";
+    console.error(err);
   }
 }
 
+// ===== INIT =====
 loadDarkMode();
-loadHeaderImage();
+loadHeroImage();
+loadHomestay();
 </script>
 
 </body>
